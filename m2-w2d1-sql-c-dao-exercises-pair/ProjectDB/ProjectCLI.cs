@@ -21,7 +21,7 @@ namespace ProjectDB
         const string Command_AssignEmployeeToProject = "9";
         const string Command_RemoveEmployeeFromProject = "10";
         const string Command_Quit = "q";
-        const string DatabaseConnection = "";
+        const string DatabaseConnection = @"Data Source=DESKTOP-58F8CH1\SQLEXPRESS;Initial Catalog=Week6Project;Integrated Security=True";
 
         public void RunCLI()
         {
@@ -212,6 +212,8 @@ namespace ProjectDB
             {
                 Console.WriteLine("**** NO RESULTS ****");
             }
+            Console.WriteLine();
+            Console.WriteLine();
         }
 
         private void GetAllEmployees()

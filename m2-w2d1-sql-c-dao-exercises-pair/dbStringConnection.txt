@@ -1,0 +1,3 @@
+Data Source=DESKTOP-58F8CH1\SQLEXPRESS;Initial Catalog=example;Integrated Security=True
+
+Data Source=DESKTOP-58F8CH1\SQLEXPRESS;Initial Catalog=example;User ID=student;Password=student
