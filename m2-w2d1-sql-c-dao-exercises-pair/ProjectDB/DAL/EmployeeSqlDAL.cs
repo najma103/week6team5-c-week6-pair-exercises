@@ -16,7 +16,7 @@ namespace ProjectDB.DAL
         private const string SQL_SearchEmpWithOutProj = @"select * from employee e
                                                 left outer join project_employee pe on pe.employee_id = e.employee_id
                                                 where pe.project_id is null;";
-        private const string SQL_UpdateEmployee = @"update department set name = @name where department_id = @dept_id;";
+  
 
         // Single Parameter Constructor
         public EmployeeSqlDAL(string dbConnectionString)
