@@ -1,5 +1,6 @@
 ﻿using ProjectDB.Models;
 using System;
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -75,7 +76,7 @@ namespace ProjectDB.DAL
             catch (SqlException ex)
             {
                 //log
-                throw;
+                throw ex;
             }
         }
 
