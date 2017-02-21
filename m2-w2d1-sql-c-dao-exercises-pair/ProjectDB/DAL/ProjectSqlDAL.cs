@@ -13,6 +13,8 @@ namespace ProjectDB.DAL
         private string connectionString;
         private const string SQL_Projects = @"select * from project";
         private const string SQL_InsertProjects = @"insert into project_employee values (@projId, @empId);";
+        private const string SQL_InsertNewProject =
+                                @"insert into project values(@projectName,@fromDate, @toDate)";
         private const string SQL_DeleteProjects = @"delete from project_employee where @empId = employee_id and @projId = project_id";
 
         // Single Parameter Constructor
@@ -109,7 +111,28 @@ namespace ProjectDB.DAL
 
         public bool CreateProject(Project newProject)
         {
-            throw new NotImplementedException();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(SQL_InsertNewProject, conn);
+                
+                    cmd.Parameters.AddWithValue("@projectName", newProject.Name);
+                    cmd.Parameters.AddWithValue("@fromDate", newProject.StartDate);
+                    cmd.Parameters.AddWithValue("@toDate", newProject.EndDate);
+
+                    int rowsAffected = cmd.ExecuteNonQuery();
+
+                    return (rowsAffected > 0); //true if one row was affected
+                }
+            }
+            catch (SqlException ex)
+            {
+                //log
+                throw;
+            }
         }
 
     }
