@@ -77,10 +77,10 @@ namespace ProjectDB.Test.DAL
             List<Employee> employees = dal.GetEmployeesWithoutProjects();
 
             Assert.IsNotNull(employees);
-            Assert.AreEqual(1, employees.Count);
+            Assert.AreEqual(2, employees.Count);
 
             //check if employee_id that is returned is = 4
-            Assert.AreEqual(4, employees[0].EmployeeId);
+            Assert.AreEqual(3, employees[0].EmployeeId);
 
         }
     }

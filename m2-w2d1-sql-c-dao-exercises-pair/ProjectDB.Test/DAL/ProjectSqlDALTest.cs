@@ -58,12 +58,48 @@ namespace ProjectDB.Test.DAL
         [TestMethod()]
         public void AssignEmployeeToProjectTest()
         {
-            int projectId = 3;
-            int employeeId = 5;
+            int projectId = 6;
+            int employeeId = 3;
 
             ProjectSqlDAL dal = new ProjectSqlDAL(connectionString);
             bool result = dal.AssignEmployeeToProject(projectId, employeeId);
             Assert.AreEqual(true, result);
+
+        }
+        [TestMethod()]
+        public void CreateProjectTest()
+        {
+            
+            List<Project> listOfProjects = new List<Project>();
+
+            DateTime dateValue = DateTime.MinValue;
+            string projectName = "VendingMachine";
+            string strStartDate = "02/09/2017";
+            string strEndDate = "02/12/2017";
+
+            //bool fromDate = DateTime.Parse(strStartDate); 
+            DateTime startDate = DateTime.Parse(strStartDate);
+
+            //bool toDate = DateTime.TryParse(strEndDate, out dateValue);
+            DateTime endDate = DateTime.Parse(strEndDate);
+
+            Project newProj = new Project()
+            {
+                Name = projectName,
+                StartDate = startDate,
+                EndDate = endDate
+            };
+
+            ProjectSqlDAL dal = new ProjectSqlDAL(connectionString);
+            bool result = dal.CreateProject(newProj);
+            //this tests if project was created.
+            Assert.AreEqual(true, result);
+
+            listOfProjects = dal.GetAllProjects();
+
+            Assert.AreEqual(projectName, listOfProjects[listOfProjects.Count - 1].Name);
+
+
 
         }
     }
