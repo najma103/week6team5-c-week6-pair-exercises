@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="DAL\CampgroundSqlDal.cs" />
     <Compile Include="DAL\ParkSqlDal.cs" />
+    <Compile Include="DAL\SiteSqlDal.cs" />
     <Compile Include="Models\Campground.cs" />
     <Compile Include="Models\Park.cs" />
     <Compile Include="Models\Reservation.cs" />
