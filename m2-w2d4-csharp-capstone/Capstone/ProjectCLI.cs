@@ -24,7 +24,7 @@ namespace Capstone
             List<Park> listOfParks = dal.GetAllParks();
             //Console.WriteLine("Welcome To Campground Reservation System");
             
-            //Console.WriteLine("Please Select A Park Further Details");
+            //Console.WriteLine("Please Select Park for Park Details");
             while (true)
             {
                 string userOption = Console.ReadLine();
