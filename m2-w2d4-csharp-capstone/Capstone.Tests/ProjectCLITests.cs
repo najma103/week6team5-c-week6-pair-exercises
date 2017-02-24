@@ -21,15 +21,15 @@ namespace Capstone.Tests
         public void SearchAvailableSitesByCampIdTest()
         {
         }
-
+        [TestMethod]
         public void MakeReservationTest()
         {
         }
-
+        [TestMethod]
         public void DisplayParkDetailsTest()
         {
         }
-
+        [TestMethod]
         public void DisplayCampsByParkIdTest()
         {
         }
