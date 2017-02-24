@@ -11,9 +11,7 @@ namespace Capstone.DAL
     class CampgroundSqlDal
     {
         private string connectionString;
-        private const string SQL_SelectAllCampsByParkId = 
-                                                    @"select * from campground
-                                                    where park_id = @parkId";
+        private const string SQL_SelectAllCampsByParkId = @"select * from campground where park_id = @parkId";
         private const string SQL_SelectCampByCampId = @"select * from campground where campground_id = @campId";
         public CampgroundSqlDal(string dbConnection)
         {
