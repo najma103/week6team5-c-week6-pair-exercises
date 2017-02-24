@@ -11,7 +11,8 @@ namespace Capstone.DAL
     class ReservationSqlDal
     {
         private string connectionString;
-        private const string SQL_SelectLastRow = @"select * from park order by name;";
+        private const string SQL_SelectLastRow = @"SELECT TOP 1(reservation_id) FROM reservation r
+                                                   ORDER BY r.reservation_id DESC;";
         private const string SQL_InsertNewRow = @"insert into reservation values(@siteId, @name, @fromDate, @toDate, @createDate)";
         public ReservationSqlDal(string strConnection)
         {
