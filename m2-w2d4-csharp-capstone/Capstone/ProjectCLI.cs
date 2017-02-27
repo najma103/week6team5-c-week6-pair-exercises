@@ -64,6 +64,8 @@ namespace Capstone
             if (dictReservations.Count > 0)
             {
                 Console.WriteLine("Current Park Reservations: ");
+                Console.WriteLine("ID\t Site ID\t\t Reservation Name\t\t Start Date\t" +
+                                    "End date\t Create Date");
                 foreach (var key in dictReservations.Keys)
                 {
                     Console.WriteLine(dictReservations[key].ToString());

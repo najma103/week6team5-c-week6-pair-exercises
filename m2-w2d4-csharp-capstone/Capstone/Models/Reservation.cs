@@ -19,7 +19,7 @@ namespace Capstone.Models
 
             public override string ToString()
             {
-                return ReservationId.ToString().PadRight(10) + SiteId.ToString().PadRight(10) + Name.ToString().PadRight(30) + FromDate.ToShortDateString().PadRight(10) + ToDate.ToShortDateString().PadRight(10) + CreateDate.ToShortDateString().PadRight(30);
+                return ReservationId.ToString().PadRight(9) + SiteId.ToString().PadRight(24) + Name.ToString().PadRight(32) + FromDate.ToShortDateString().PadRight(15) + ToDate.ToShortDateString().PadRight(17) + CreateDate.ToShortDateString().PadRight(10);
             }
         }
 }
