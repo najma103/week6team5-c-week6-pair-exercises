@@ -23,7 +23,7 @@ namespace Capstone.Models
                                     "July", "August", "September", "October", "November", "December"};
             string strFromMonth = months[OpenFromMonth].ToString();
             string strToMonth = months[OpenToMonth].ToString();
-            return CampgroundId.ToString().PadRight(5) + Name.PadRight(15) + strFromMonth.PadRight(10) + strToMonth.PadRight(10) + DailyFee.ToString().PadRight(5);
+            return CampgroundId.ToString().PadLeft(5).PadRight(17) + Name.PadRight(32) + strFromMonth.PadRight(16) + strToMonth.PadRight(16) + DailyFee.ToString().PadRight(5);
         }
     }
 }

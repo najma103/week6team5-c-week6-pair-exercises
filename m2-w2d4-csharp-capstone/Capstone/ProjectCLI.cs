@@ -277,6 +277,7 @@ namespace Capstone
 
         public void DisplayCampsByParkId(int parkId, List<Park> listOfParks)
         {
+            Console.WriteLine("Camp Id\t\t Name\t\t\t\t Open From\t Open Until\t Daily Fee");
             CampgroundSqlDal dal = new CampgroundSqlDal(dbConnection);
             List<Campground> listOfCamps = dal.GetAllCampsByParkId(parkId);
             if (listOfCamps.Count > 0)
