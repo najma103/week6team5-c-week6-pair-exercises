@@ -22,29 +22,24 @@ namespace Capstone
             DisplayMainMenu();
             ParkSqlDal dal = new ParkSqlDal(dbConnection);
             List<Park> listOfParks = dal.GetAllParks();
-            //Console.WriteLine("Welcome To Campground Reservation System");
-            
-            //Console.WriteLine("Please Select Park for Park Details");
+
             while (true)
             {
                 string userOption = Console.ReadLine();
-                int parkIndex = Convert.ToInt32(userOption);
+               // int parkIndex = Convert.ToInt32(Console.ReadLine());
 
                 if (userOption == "1")
                 {
                     DisplayAllParks(listOfParks);
                     //sub menu for customer to choose campground based on park id
-                    
                     ProcessCustomerOption();
                     //Console.ReadKey();
                     //break;
                 }
                 else if (userOption == "2")
                 {
-                    DisplayAllParks(listOfParks);
-                    Console.WriteLine("Please Select A Park__");
-                    int parkId = Convert.ToInt32(Console.ReadLine());
-                    
+                    GetAllCurrentReservations(listOfParks);
+
                 } else if (userOption == "3")
                 {
                     Console.WriteLine("Thank You For Using Our Park Reservation System");
@@ -53,37 +48,28 @@ namespace Capstone
 
                 DisplayMainMenu();
             }
-    
 
+        }
 
-            // DisplayParkDetails(parkIndex-1, listOfParks);
-            //Console.WriteLine("1.\t View List of Campgrounds");
-            //Console.WriteLine("2.\t View List of Parks");
-            ////Console.WriteLine("3.\t Search For Reservations");
-
-            //int option = Convert.ToInt32(Console.ReadLine());
-            ////this the park id to access campgrounds
-            //int parkId = listOfParks[parkIndex - 1].ParkId;
-
-            //if (option == 1)
-            //{
-            //    DisplayCampsByParkId(parkId, listOfParks);
-            //    Console.ReadKey();
-            //}
-            //else if (option == 3)
-            //{
-            //    DisplayCampsByParkId(parkId, listOfParks);
-            //    DisplayAvailableSites();
-            //}
-
-
-
-
-
-
-            //SearchCampsByParkId(parkIndex);
-
-
+        public void GetAllCurrentReservations(List<Park> listOfParks)
+        {
+            DisplayAllParks(listOfParks);
+            Console.WriteLine("Please Select A Park__");
+            int parkId = Convert.ToInt32(Console.ReadLine());
+            ReservationSqlDal dal = new ReservationSqlDal(dbConnection);
+            Dictionary<int, Reservation> dictReservations = dal.GetCurrentReservations(parkId);
+            if (dictReservations.Count > 0)
+            {
+                Console.WriteLine("Current Park Reservations: ");
+                foreach (var key in dictReservations.Keys)
+                {
+                    Console.WriteLine(dictReservations[key].ToString());
+                }
+            }
+            else
+            {
+                Console.WriteLine("Sorry there are no current reservations. ");
+            }
         }
 
         public void ProcessCustomerOption()
@@ -129,8 +115,6 @@ namespace Capstone
                 DisplaySubMenu();
             }
 
-
-
         }
         public void DisplayAllParks(List<Park> listOfParks)
         {
@@ -174,7 +158,6 @@ namespace Capstone
             {
                 for (int i = 0; i < listOfAvailableSites.Count; i++)
                 {
-                    //Console.Write(listOfCamp[0].Name + "\t");
                     Console.Write(listOfAvailableSites[i].SiteNumber + "\t\t");
                     Console.Write(listOfAvailableSites[i].MaxOccupancy + "\t\t");
                     if (listOfAvailableSites[i].Accessible)
@@ -250,9 +233,7 @@ namespace Capstone
                 Console.WriteLine("Reservation was successfully created and reservation id is " + 1);
                 Console.ReadKey();
             }
-           // int reservationId = 1 // dal.MakeNewReservation();
 
-            //return reservationId;
         }
         public void DisplayParkDetails(int parkIndex, List<Park> listOfParks)
         {
@@ -315,12 +296,14 @@ namespace Capstone
 
         public void DisplaySubMenu()
         {
-            //Console.Clear();
+            Console.WriteLine();
             Console.WriteLine(@"( 1 ) View Campgrounds By Park Id.");
             Console.WriteLine(@"( 2 ) View Park Details");
             Console.WriteLine(@"( 3 ) View All CampSites By Park ID.");
             Console.WriteLine(@"( 4 ) Search Reservation Availabilty By Campground Id.");
             Console.WriteLine(@"( 5 ) Return To Previous Menu. ");
+            Console.WriteLine();
+            Console.WriteLine();
         }
     }
 }

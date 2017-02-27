@@ -16,7 +16,7 @@ namespace Capstone.DAL
 
         private const string SQL_InsertNewRow = @"insert into reservation values(@siteId, @name, @fromDate, @toDate, @createDate)";
 
-        private const string SQL_GetCurrentReservation = @"SELECT r.name, r.from_date, r.to_date, r.reservation_id FROM park p
+        private const string SQL_GetCurrentReservation = @"SELECT r.site_id, r.name, r.from_date, r.to_date, create_date, r.reservation_id FROM park p
                                                         join campground c ON p.park_id = c.park_id
                                                         join site s ON c.campground_id = s.campground_id
                                                         join reservation r ON s.site_id = r.site_id
@@ -55,42 +55,41 @@ namespace Capstone.DAL
             }
         }
 
-        //public List<Reservation> GetCurrentReservations(int parkId)
-        //{
-        //    List<Reservation> currReservations = new List<Reservation>();
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection(connectionString))
-        //        {
-        //            conn.Open();
+        public Dictionary<int, Reservation> GetCurrentReservations(int parkId)
+        {
+            Dictionary<int, Reservation> dictReservations = new Dictionary<int, Reservation>();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
 
-        //            SqlCommand cmd = new SqlCommand(SQL_GetCurrentReservation, conn);
+                    SqlCommand cmd = new SqlCommand(SQL_GetCurrentReservation, conn);
+                    cmd.Parameters.AddWithValue("@parkId", parkId);
 
-        //            SqlDataReader reader = cmd.ExecuteReader();
+                    SqlDataReader reader = cmd.ExecuteReader();
 
-        //            while (reader.Read())
-        //            {
-        //                Campground camps = new Campground();
+                    while (reader.Read())
+                    {
+                        Reservation reservation = new Reservation();
 
-        //                camps.CampgroundId = Convert.ToInt32(reader["campground_id"]);
-        //                camps.ParkId = Convert.ToInt32(reader["park_id"]);
-        //                camps.Name = Convert.ToString(reader["name"]);
-        //                camps.OpenFromMonth = Convert.ToInt32(reader["open_from_mm"]);
-        //                camps.OpenToMonth = Convert.ToInt32(reader["open_to_mm"]);
-        //                camps.DailyFee = Convert.ToDouble(reader["daily_fee"]);
+                        reservation.ReservationId = Convert.ToInt32(reader["reservation_id"]);
+                        reservation.SiteId = Convert.ToInt32(reader["site_id"]);
+                        reservation.Name = Convert.ToString(reader["name"]);
+                        reservation.FromDate = Convert.ToDateTime(reader["from_date"]);
+                        reservation.ToDate = Convert.ToDateTime(reader["to_date"]);
+                        reservation.CreateDate = Convert.ToDateTime(reader["create_date"]);
 
+                        dictReservations[reservation.ReservationId] = reservation;
+                    }
+                    return dictReservations;
+                }
 
-        //                listOfCamps.Add(camps);
-
-        //            }
-        //            return listOfCamps;
-        //        }
-
-        //    }
-        //    catch (SqlException e)
-        //    {
-        //        throw e;
-        //    }
-        //}
+            }
+            catch (SqlException e)
+            {
+                throw e;
+            }
+        }
     }
 }
