@@ -21,7 +21,7 @@ namespace Capstone
             DisplayHeader();
             DisplayMainMenu();
             ParkSqlDal dal = new ParkSqlDal(dbConnection);
-            List<Park> listOfParks = dal.GetAllParks();
+            Dictionary<int,Park> dictionaryParks = dal.GetAllParks();
 
             while (true)
             {
@@ -30,7 +30,7 @@ namespace Capstone
 
                 if (userOption == "1")
                 {
-                    DisplayAllParks(listOfParks);
+                    DisplayAllParks(dictionaryParks);
                     //sub menu for customer to choose campground based on park id
                     ProcessCustomerOption();
                     //Console.ReadKey();
@@ -38,7 +38,7 @@ namespace Capstone
                 }
                 else if (userOption == "2")
                 {
-                    GetAllCurrentReservations(listOfParks);
+                    GetAllCurrentReservations(dictionaryParks);
 
                 } else if (userOption == "3")
                 {
@@ -51,7 +51,7 @@ namespace Capstone
 
         }
 
-        public void GetAllCurrentReservations(List<Park> listOfParks)
+        public void GetAllCurrentReservations(Dictionary<int,Park> listOfParks)
         {
             DisplayAllParks(listOfParks);
 
@@ -59,30 +59,35 @@ namespace Capstone
             Console.WriteLine("Please Select A Park_____");
 
             int parkId = Convert.ToInt32(Console.ReadLine());
-            ReservationSqlDal dal = new ReservationSqlDal(dbConnection);
-            Dictionary<int, Reservation> dictReservations = dal.GetCurrentReservations(parkId);
-            if (dictReservations.Count > 0)
+            if (listOfParks.ContainsKey(parkId))
             {
-                Console.WriteLine("Current Park Reservations: ");
-                Console.WriteLine("ID\t Site ID\t\t Reservation Name\t\t Start Date\t" +
-                                    "End date\t Create Date");
-                foreach (var key in dictReservations.Keys)
+                ReservationSqlDal dal = new ReservationSqlDal(dbConnection);
+                Dictionary<int, Reservation> dictReservations = dal.GetCurrentReservations(parkId);
+                if (dictReservations.Count > 0)
                 {
-                    Console.WriteLine(dictReservations[key].ToString());
+                    Console.WriteLine("Current Park Reservations: ");
+                    Console.WriteLine("ID\t Site ID\t\t Reservation Name\t\t Start Date\t" +
+                                        "End date\t Create Date");
+                    foreach (var key in dictReservations.Keys)
+                    {
+                        Console.WriteLine(dictReservations[key].ToString());
+                    }
                 }
+                else
+                {
+                    Console.WriteLine("Sorry there are no current reservations. ");
+                }
+                Console.ReadKey();
+
             }
-            else
-            {
-                Console.WriteLine("Sorry there are no current reservations. ");
-            }
-            Console.ReadKey();
+
         }
 
         public void ProcessCustomerOption()
         {
             DisplaySubMenu();
             ParkSqlDal dal = new ParkSqlDal(dbConnection);
-            List<Park> listOfParks = dal.GetAllParks();
+            Dictionary<int,Park> listOfParks = dal.GetAllParks();
             int parkId; 
             
             while (true)
@@ -102,7 +107,7 @@ namespace Capstone
                     DisplayAllParks(listOfParks);
                     Console.WriteLine("Please Choose A Park To View Details");
                     parkId = Convert.ToInt32(Console.ReadLine());
-                    DisplayParkDetails(parkId-1, listOfParks);
+                    DisplayParkDetails(parkId, listOfParks);
 
                 }
                 else if (userInput == "3")
@@ -122,16 +127,15 @@ namespace Capstone
             }
 
         }
-        public void DisplayAllParks(List<Park> listOfParks)
+        public void DisplayAllParks(Dictionary<int,Park> listOfParks)
         {
-            int index;
-            for (int i = 0; i < listOfParks.Count; i++)
+            foreach (int key  in listOfParks.Keys)
             {
-                index = i + 1;
-                Console.Write(index + ".  ");
-                Console.Write(listOfParks[i].Name);
+                Console.Write(key + "-  ");
+                Console.Write(listOfParks[key].Name.ToString());
                 Console.WriteLine();
             }
+
         }
 
         public void SearchByCampId()
@@ -241,7 +245,7 @@ namespace Capstone
             }
 
         }
-        public void DisplayParkDetails(int parkIndex, List<Park> listOfParks)
+        public void DisplayParkDetails(int parkIndex, Dictionary<int,Park> listOfParks)
         {
             while (true)
             {
@@ -265,17 +269,24 @@ namespace Capstone
             }
         }
 
-        public void DisplayCampsByParkId(int parkId, List<Park> listOfParks)
+        public void DisplayCampsByParkId(int parkId, Dictionary<int,Park> listOfParks)
         {
-            Console.WriteLine("Camp Id\t\t Name\t\t\t\t Open From\t Open Until\t Daily Fee");
-            CampgroundSqlDal dal = new CampgroundSqlDal(dbConnection);
-            List<Campground> listOfCamps = dal.GetAllCampsByParkId(parkId);
-            if (listOfCamps.Count > 0)
+            if (listOfParks.ContainsKey(parkId))
             {
-                for (int i = 0; i < listOfCamps.Count; i++)
+                CampgroundSqlDal dal = new CampgroundSqlDal(dbConnection);
+                List<Campground> listOfCamps = dal.GetAllCampsByParkId(parkId);
+
+                Console.WriteLine("Camp Id\t\t Name\t\t\t\t Open From\t Open Until\t Daily Fee");
+                if (listOfCamps.Count > 0)
                 {
-                    Console.WriteLine( listOfCamps[i]);
+                    for (int i = 0; i < listOfCamps.Count; i++)
+                    {
+                        Console.WriteLine(listOfCamps[i]);
+                    }
                 }
+            } else
+            {
+                Console.WriteLine("Invalid Park ID - Please choose a valid park.");
             }
         }
 

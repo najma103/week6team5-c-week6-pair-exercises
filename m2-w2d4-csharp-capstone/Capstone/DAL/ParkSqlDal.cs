@@ -17,9 +17,10 @@ namespace Capstone.DAL
             this.connectionString = connectionString;
         }
 
-        public List<Park> GetAllParks()
+        public Dictionary<int,Park> GetAllParks()
         {
-            List<Park> listOfParks = new List<Park>();
+           
+            Dictionary<int, Park> dictOfParks = new Dictionary<int, Park>();
 
             try
             {
@@ -42,10 +43,11 @@ namespace Capstone.DAL
                         park.Visitors = Convert.ToInt32(reader["visitors"]);
                         park.Description = Convert.ToString(reader["description"]);
 
-                        listOfParks.Add(park);
+                        //key for dictionary is park id
+                        dictOfParks[park.ParkId] = park;
 
                     }
-                    return listOfParks;
+                    return dictOfParks;
                 }
             }
             catch (SqlException ex)
