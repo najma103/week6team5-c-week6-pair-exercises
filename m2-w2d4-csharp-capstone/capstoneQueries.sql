@@ -37,12 +37,13 @@ join site s ON c.campground_id = s.campground_id
 join reservation r ON s.site_id = r.site_id
 WHERE datediff(day, getdate(),r.from_date) <= 2 AND datediff(day, getdate(),r.from_date) >= 0
 ORDER BY r.from_date DESC;
+
 --30 day reservation query below
 SELECT r.name, r.from_date, r.to_date, r.reservation_id FROM park p
 join campground c ON p.park_id = c.park_id
 join site s ON c.campground_id = s.campground_id
 join reservation r ON s.site_id = r.site_id
-WHERE datediff(day, getdate(),r.from_date) <= 30 AND datediff(day, getdate(),r.from_date) >= 0
+WHERE datediff(day, getdate(),r.from_date) <= 30 AND datediff(day, getdate(),r.from_date) >= 0 AND p.park_id = 2
 ORDER BY r.from_date;
 
 --Query the Reservation_Id from a Provided Family Name, From & To Dates
