@@ -26,7 +26,7 @@ namespace Capstone
             while (true)
             {
                 string userOption = Console.ReadLine();
-               // int parkIndex = Convert.ToInt32(Console.ReadLine());
+                int parkIndex = Convert.ToInt32(userOption);
 
                 if (userOption == "1")
                 {
@@ -54,7 +54,10 @@ namespace Capstone
         public void GetAllCurrentReservations(List<Park> listOfParks)
         {
             DisplayAllParks(listOfParks);
-            Console.WriteLine("Please Select A Park__");
+
+            Console.WriteLine();
+            Console.WriteLine("Please Select A Park_____");
+
             int parkId = Convert.ToInt32(Console.ReadLine());
             ReservationSqlDal dal = new ReservationSqlDal(dbConnection);
             Dictionary<int, Reservation> dictReservations = dal.GetCurrentReservations(parkId);
@@ -70,6 +73,7 @@ namespace Capstone
             {
                 Console.WriteLine("Sorry there are no current reservations. ");
             }
+            Console.ReadKey();
         }
 
         public void ProcessCustomerOption()
