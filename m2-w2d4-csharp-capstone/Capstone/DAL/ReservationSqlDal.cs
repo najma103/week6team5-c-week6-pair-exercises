@@ -55,7 +55,7 @@ namespace Capstone.DAL
             }
         }
 
-        //public List<Reservation> GetCurrentReservations()
+        //public List<Reservation> GetCurrentReservations(int parkId)
         //{
         //    List<Reservation> currReservations = new List<Reservation>();
         //    try

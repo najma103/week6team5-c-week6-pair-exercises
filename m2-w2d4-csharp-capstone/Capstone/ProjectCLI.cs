@@ -32,7 +32,7 @@ namespace Capstone
 
                 if (userOption == "1")
                 {
-                    //DisplayAllParks(listOfParks);
+                    DisplayAllParks(listOfParks);
                     //sub menu for customer to choose campground based on park id
                     
                     ProcessCustomerOption();
@@ -41,7 +41,10 @@ namespace Capstone
                 }
                 else if (userOption == "2")
                 {
-                    break;
+                    DisplayAllParks(listOfParks);
+                    Console.WriteLine("Please Select A Park__");
+                    int parkId = Convert.ToInt32(Console.ReadLine());
+                    
                 } else if (userOption == "3")
                 {
                     Console.WriteLine("Thank You For Using Our Park Reservation System");
