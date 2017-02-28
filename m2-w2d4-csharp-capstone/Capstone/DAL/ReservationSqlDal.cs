@@ -91,5 +91,34 @@ namespace Capstone.DAL
                 throw e;
             }
         }
+
+        public int GetLastReservations()
+        {
+            
+            try
+            {
+                int reservationId = 0;
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand(SQL_SelectLastRow, conn);
+                   
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    while (reader.Read())
+                    {
+                        reservationId = Convert.ToInt32(reader["reservation_id"]);
+                    }
+                   return reservationId;
+                }
+
+            }
+            catch (SqlException e)
+            {
+                throw e;
+            }
+        }
     }
 }

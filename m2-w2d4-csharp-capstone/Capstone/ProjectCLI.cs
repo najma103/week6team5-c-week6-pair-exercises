@@ -93,32 +93,65 @@ namespace Capstone
             while (true)
             {
                 string userInput = Console.ReadLine();
-                if (userInput == "1")
-                {
-                    Console.Clear();
-                    DisplayAllParks(listOfParks);
-                    Console.WriteLine("Please Select A Park To View Campgrounds");
-                    parkId = Convert.ToInt32(Console.ReadLine());
-                    DisplayCampsByParkId(parkId, listOfParks);
-
-                }
-                else if (userInput == "2")
+                if (userInput == "1") // park details
                 {
                     DisplayAllParks(listOfParks);
                     Console.WriteLine("Please Choose A Park To View Details");
                     parkId = Convert.ToInt32(Console.ReadLine());
                     DisplayParkDetails(parkId, listOfParks);
+                }
+                else if (userInput == "2")
+                {
+                    DisplayAllParks(listOfParks);
+                    Console.WriteLine("Please Select A Park ID To View All Campground Sites");
+                    parkId = Convert.ToInt32(Console.ReadLine());
+
+                    Console.WriteLine(@"What is the arrival date? __/__/____ ");
+                    DateTime fromDate = Convert.ToDateTime(Console.ReadLine());
+
+                    Console.WriteLine(@"What is the departure date? __/__/____ ");
+
+                    DateTime toDate = Convert.ToDateTime(Console.ReadLine());
+
+                    if (listOfParks.ContainsKey(parkId))
+                    {
+                        CampgroundSqlDal campDal = new CampgroundSqlDal(dbConnection);
+                        Dictionary<int, Campground> listOfCamp = campDal.GetAllCampsByParkId(parkId);
+                        Console.WriteLine();
+                        Console.WriteLine("Results Matching Your Search Criteria ");
+                        foreach (int key  in listOfCamp.Keys)
+                        {
+                            if (fromDate.Month >= listOfCamp[key].OpenFromMonth && toDate.Month <= listOfCamp[key].OpenToMonth)
+                            {
+                                Console.WriteLine("Camp Name \t\t Site No.\t Max Occup.\t Accessible?\t RV Len \t Utility\t Cost");
+
+                                SearchAvailableSitesByCampId(key, fromDate, toDate);
+                                MakeReservation(fromDate, toDate);
+                            }
+                            else
+                            {
+                                Console.WriteLine(@"Invalid Date(s), park is not open on one of these dates. ");
+                            }
+                        }
+                    }
 
                 }
                 else if (userInput == "3")
                 {
-                    //search available camp sites by park id 
+                    //Console.Clear();
+                    DisplayAllParks(listOfParks);
+                    Console.WriteLine("Please Select A Park ID To View Campgrounds");
+                    parkId = Convert.ToInt32(Console.ReadLine());
+                    if (listOfParks.ContainsKey(parkId))
+                    {
+                        DisplayCampsByParkId(parkId, listOfParks);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid Park ID Selection, Please try again. ");
+                    }
                 }
-                else if(userInput == "4")
-                {
-                    SearchByCampId();
-                }
-                else if (userInput == "5")
+                else if (userInput == "4")
                 {
                     return;
                 }
@@ -138,36 +171,50 @@ namespace Capstone
 
         }
 
-        public void SearchByCampId()
+        public void SearchByCampId(int campId)
         {
-            Console.WriteLine();
-               
-            Console.WriteLine(@"Which campground (enter 0 to cancel)? __");
-            int campId = Convert.ToInt32(Console.ReadLine());
+            CampgroundSqlDal campDal = new CampgroundSqlDal(dbConnection);
+            Dictionary<int, Campground> listOfCamp = campDal.GetNameByCampId(campId);
+
             Console.WriteLine(@"What is the arrival date? __/__/____ ");
             DateTime fromDate = Convert.ToDateTime(Console.ReadLine());
 
             Console.WriteLine(@"What is the departure date? __/__/____ ");
+
             DateTime toDate = Convert.ToDateTime(Console.ReadLine());
 
-            Console.WriteLine("Results Matching Your Search Criteria ");
-            Console.WriteLine("Site No.\t Max Occup.\t Accessible?\t RV Len \t Utility\t Cost");
+            if (fromDate.Month >= listOfCamp[campId].OpenFromMonth  && toDate.Month <= listOfCamp[campId].OpenToMonth )
+            {
+                Console.WriteLine("Results Matching Your Search Criteria\r\n ");
+                Console.WriteLine("Camp Name. \t\t Site No.\t Max Occup.\t Accessible?\t RV Len \t Utility\t Cost");
 
-            SearchAvailableSitesByCampId(campId, fromDate, toDate);
+                SearchAvailableSitesByCampId(campId, fromDate, toDate);
+                MakeReservation(fromDate, toDate);
+            }
+            else
+            {
+                Console.WriteLine(@"Invalid Date(s), park is not open on one of these dates. ");
+            }
+
+
         }
         public void SearchAvailableSitesByCampId(int campId, DateTime fromDate, DateTime toDate)
         {
+            TimeSpan totalDays = toDate.Subtract(fromDate);
+            int days = Convert.ToInt32(totalDays.Days);
+
             SiteSqlDal dal = new SiteSqlDal(dbConnection);
             List<Site> listOfAvailableSites = dal.GetAllAvailableSitesForCamp(campId, fromDate, toDate);
 
             //when working on the bonus search - move this to new method and call it
             CampgroundSqlDal campDal = new CampgroundSqlDal(dbConnection);
-            List<Campground> listOfCamp = campDal.GetNameByCampId(campId);
+            Dictionary<int,Campground> listOfCamp = campDal.GetNameByCampId(campId);
 
             if (listOfAvailableSites.Count > 0)
             {
                 for (int i = 0; i < listOfAvailableSites.Count; i++)
                 {
+                    Console.Write(listOfCamp[campId].Name + "\t\t");
                     Console.Write(listOfAvailableSites[i].SiteNumber + "\t\t");
                     Console.Write(listOfAvailableSites[i].MaxOccupancy + "\t\t");
                     if (listOfAvailableSites[i].Accessible)
@@ -194,62 +241,57 @@ namespace Capstone
                     {
                         Console.Write("N/A\t\t");
                     }
-                    Console.Write(listOfCamp[0].DailyFee);
+                    Console.Write(listOfCamp[campId].DailyFee * days);
                     Console.WriteLine();
 
                 }
-
-                Console.WriteLine();
-                Console.WriteLine("Which site should be reserved (enter 0 to cancel)? __  ");
-                int userInput = Convert.ToInt32(Console.ReadLine());
-                string reservationName = string.Empty;
-                if (userInput == 0)
-                {
-                    return;
-                }
-                else
-                {
-
-                   if (listOfAvailableSites.Count >= userInput)
-                   {
-                        Console.WriteLine("What name should the reservation be made under? __");
-                        reservationName = Console.ReadLine();
-                        MakeReservation(userInput, reservationName, fromDate, toDate);
-                   }
-                }
-                
-            } else
+            }
+            else
             {
                 Console.WriteLine("Sorry there are no available sites for your requested dates.");
             }
 
         }
 
-        public void MakeReservation(int userInput, string reservationName, DateTime fromDate, DateTime toDate)
+        public void MakeReservation( DateTime fromDate, DateTime toDate)
         {
-            Reservation newReservation = new Reservation()
+            Console.WriteLine();
+            Console.WriteLine("Which site should be reserved (enter 0 to cancel)? __  ");
+            int userInput = Convert.ToInt32(Console.ReadLine());
+            string reservationName = string.Empty;
+            if (userInput == 0)
             {
-                SiteId = userInput,
-                Name = reservationName,
-                FromDate = fromDate,
-                ToDate = toDate,
-                CreateDate = DateTime.Now
-            };
-            ReservationSqlDal dal = new ReservationSqlDal(dbConnection);
-            bool rowInserted = dal.CreateReservation(newReservation);
-
-            if (rowInserted)
-            {
-                Console.WriteLine("Reservation was successfully created and reservation id is " + 1);
-                Console.ReadKey();
+                return;
             }
+            else
+            {
+                Console.WriteLine("What name should the reservation be made under? __");
+                reservationName = Console.ReadLine();
+                Reservation newReservation = new Reservation()
+                {
+                    SiteId = userInput,
+                    Name = reservationName,
+                    FromDate = fromDate,
+                    ToDate = toDate,
+                    CreateDate = DateTime.Now
+                };
+                ReservationSqlDal dal = new ReservationSqlDal(dbConnection);
+                bool rowInserted = dal.CreateReservation(newReservation);
 
+                if (rowInserted)
+                {
+                    int reservationId = dal.GetLastReservations();
+                    Console.WriteLine("Reservation was successfully created and reservation id is " +
+                              reservationId);
+                    Console.ReadKey();
+                }
+            }
         }
         public void DisplayParkDetails(int parkIndex, Dictionary<int,Park> listOfParks)
         {
             while (true)
             {
-                if (listOfParks.Count > 0 && parkIndex <= listOfParks.Count)
+                if (listOfParks.ContainsKey(parkIndex))
                 {
                     Console.WriteLine(listOfParks[parkIndex].Name + " National Park");
                     Console.WriteLine("Location:\t" + listOfParks[parkIndex].Location);
@@ -274,15 +316,30 @@ namespace Capstone
             if (listOfParks.ContainsKey(parkId))
             {
                 CampgroundSqlDal dal = new CampgroundSqlDal(dbConnection);
-                List<Campground> listOfCamps = dal.GetAllCampsByParkId(parkId);
+                Dictionary<int,Campground> listOfCamps = dal.GetAllCampsByParkId(parkId);
 
                 Console.WriteLine("Camp Id\t\t Name\t\t\t\t Open From\t Open Until\t Daily Fee");
                 if (listOfCamps.Count > 0)
                 {
-                    for (int i = 0; i < listOfCamps.Count; i++)
+                    foreach(int key in listOfCamps.Keys)
                     {
-                        Console.WriteLine(listOfCamps[i]);
+                        Console.WriteLine(listOfCamps[key].ToString());
                     }
+                    Console.WriteLine("Please select campground to search for available dates or press 0 to return ___");
+                    int campId = Convert.ToInt32(Console.ReadLine());
+                    if (campId == 0)
+                    {
+                        return;
+                    }
+                    if (listOfCamps.ContainsKey(campId))
+                    {
+                        SearchByCampId(campId);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid Campground ID: ");
+                    }
+                    
                 }
             } else
             {
@@ -314,11 +371,10 @@ namespace Capstone
         public void DisplaySubMenu()
         {
             Console.WriteLine();
-            Console.WriteLine(@"( 1 ) View Campgrounds By Park Id.");
-            Console.WriteLine(@"( 2 ) View Park Details");
-            Console.WriteLine(@"( 3 ) View All CampSites By Park ID.");
-            Console.WriteLine(@"( 4 ) Search Reservation Availabilty By Campground Id.");
-            Console.WriteLine(@"( 5 ) Return To Previous Menu. ");
+            Console.WriteLine(@"( 1 ) View Park Details");
+            Console.WriteLine(@"( 2 ) View All CampSites By Park ID.");
+            Console.WriteLine(@"( 3 ) View Campgrounds By Park Id.");
+            Console.WriteLine(@"( 4 ) Return To Previous Menu. ");
             Console.WriteLine();
             Console.WriteLine();
         }

@@ -18,9 +18,9 @@ namespace Capstone.DAL
             connectionString = dbConnection;
         }
 
-        public List<Campground> GetAllCampsByParkId(int parkId)
+        public Dictionary<int,Campground> GetAllCampsByParkId(int parkId)
         {
-            List<Campground> listOfCamps = new List<Campground>();
+            Dictionary<int,Campground> listOfCamps = new Dictionary<int,Campground>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -44,7 +44,7 @@ namespace Capstone.DAL
                         camps.DailyFee = Convert.ToDouble(reader["daily_fee"]);
 
 
-                        listOfCamps.Add(camps);
+                        listOfCamps[camps.CampgroundId] = camps;
 
                     }
                     return listOfCamps;
@@ -57,9 +57,9 @@ namespace Capstone.DAL
 
         }
 
-        public List<Campground> GetNameByCampId(int campId)
+        public Dictionary<int,Campground> GetNameByCampId(int campId)
         {
-            List<Campground> listOfCamps = new List<Campground>();
+            Dictionary<int,Campground> listOfCamps = new Dictionary <int,Campground>();
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))
@@ -83,7 +83,7 @@ namespace Capstone.DAL
                         camps.DailyFee = Convert.ToDouble(reader["daily_fee"]);
 
 
-                        listOfCamps.Add(camps);
+                        listOfCamps[camps.CampgroundId] = camps;
 
                     }
                     return listOfCamps;
