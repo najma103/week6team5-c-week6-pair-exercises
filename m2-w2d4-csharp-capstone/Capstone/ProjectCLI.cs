@@ -33,8 +33,6 @@ namespace Capstone
                     DisplayAllParks(dictionaryParks);
                     //sub menu for customer to choose campground based on park id
                     ProcessCustomerOption();
-                    //Console.ReadKey();
-                    //break;
                 }
                 else if (userOption == "2")
                 {
@@ -126,13 +124,15 @@ namespace Capstone
                                 Console.WriteLine("Camp Name \t\t Site No.\t Max Occup.\t Accessible?\t RV Len \t Utility\t Cost");
 
                                 SearchAvailableSitesByCampId(key, fromDate, toDate);
-                                MakeReservation(fromDate, toDate);
+                                //MakeReservation(fromDate, toDate);
                             }
                             else
                             {
                                 Console.WriteLine(@"Invalid Date(s), park is not open on one of these dates. ");
                             }
                         }
+                        //after printing out all the available sites, calls make reservation method
+                        MakeReservation(fromDate, toDate);
                     }
 
                 }
